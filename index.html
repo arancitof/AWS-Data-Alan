@@ -1,1 +1,51 @@
-<p>Hola mundo!!</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portafolio | Alan Flores</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Puedes añadir fuentes personalizadas aquí si lo deseas */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white flex items-center justify-center h-screen">
+
+    <main class="text-center p-8 bg-slate-800 rounded-xl shadow-2xl max-w-lg mx-auto">
+        
+        <header>
+            <h1 class="text-5xl font-bold text-blue-400 mb-2">
+                Mi Portafolio
+            </h1>
+            <p class="text-3xl font-semibold text-slate-300 mb-8">
+                Alan Flores
+            </p>
+        </header>
+
+        <section class="flex flex-col sm:flex-row justify-center gap-4">
+            
+            <a href="./proyectos.html" 
+               class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
+                Proyectos
+            </a>
+
+            <a href="./sobre-mi.html" 
+               class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
+                Sobre Mí
+            </a>
+            
+            <a href="./contacto.html" 
+               class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-opacity-50">
+                Contacto
+            </a>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
