@@ -32,4 +32,4 @@ EXPOSE 8502
 
 # Comando
 # (Usamos el puerto 8502 como en el ejemplo de tu profesor)
-CMD ["streamlit", "run", "dashboard.py", "--server.port=8502", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "app.py", "--server.port=8502", "--server.address=0.0.0.0"]
