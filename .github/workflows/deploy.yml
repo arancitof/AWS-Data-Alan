@@ -1,7 +1,7 @@
 name: Deploy Metro Dashboard (Self-hosted)
 on:
   push:
-    branches: ["main"] # Se activa con cada push a 'main'
+    branches: ["main"]
   workflow_dispatch:
 
 concurrency:
@@ -10,14 +10,13 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: self-hosted # ¡Se ejecuta en TU servidor!
-    environment: prod    # Usa los secretos del entorno 'prod'
+    runs-on: self-hosted
+    environment: prod
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Tu app (awswrangler) solo necesita credenciales de AWS
       - name: Create .env from prod secrets
         shell: bash
         run: |
@@ -28,27 +27,34 @@ jobs:
             echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}";
           } > .env
           chmod 600 .env
-      
+
+      # ----- NUEVO PASO DE DEBUG 1 -----
+      - name: 🕵️ [DEBUG] Check .env file content (secrets will be masked)
+        shell: bash
+        run: |
+          echo "Checking content of .env file:"
+          cat .env
+
       - name: Build & Up with docker-compose
         shell: bash
         run: |
           set -e
-          # Detiene el contenedor anterior (si existe)
           docker-compose down --remove-orphans || true
-          
-          # Construye la nueva imagen y levanta el contenedor
           docker-compose up -d --build
-          
-          # Muestra los contenedores corriendo
           docker-compose ps
+          docker logs --tail 50 metro_dashboard || true
 
-          # Muestra los últimos logs del NUEVO contenedor
-          docker logs --tail 50 metro_dashboard || true # <- ¡CAMBIADO!
+      # ----- NUEVO PASO DE DEBUG 2 -----
+      - name: 🕵️ [DEBUG] Check environment variables INSIDE container
+        shell: bash
+        run: |
+          echo "Checking environment inside 'metro_dashboard':"
+          # Buscamos variables que empiecen con AWS
+          docker exec metro_dashboard env | grep AWS || echo "No AWS env vars found inside container"
 
-      # Verificación opcional
+      # (Este es el paso que está fallando)
       - name: Verify AWS identity inside container
         shell: bash
         run: |
           set -e
-          # Verificamos que las credenciales funcionen DENTRO del contenedor
-          docker exec metro_dashboard aws sts get-caller-identity || (echo "AWS creds not working in container" && exit 1) # <- ¡CAMBIADO!
+          docker exec metro_dashboard aws sts get-caller-identity || (echo "AWS creds not working in container" && exit 1)
