@@ -1,8 +1,7 @@
-name: Deploy (Self-hosted + docker-compose + prod env)
-
+name: Deploy Metro Dashboard (Self-hosted)
 on:
   push:
-    branches: ["main"]
+    branches: ["main"] # Se activa con cada push a 'main'
   workflow_dispatch:
 
 concurrency:
@@ -11,30 +10,45 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: self-hosted
-    environment: prod
+    runs-on: self-hosted # ¡Se ejecuta en TU servidor!
+    environment: prod    # Usa los secretos del entorno 'prod'
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Tu app (awswrangler) solo necesita credenciales de AWS
       - name: Create .env from prod secrets
         shell: bash
         run: |
           set -euo pipefail
           {
-            echo "DB_HOST=${{ secrets.DB_HOST }}";
-            echo "DB_NAME=${{ secrets.DB_NAME }}";
-            echo "DB_USER=${{ secrets.DB_USER }}";
-            echo "DB_PASS=${{ secrets.DB_PASS }}";
+            echo "AWS_REGION=${{ secrets.AWS_REGION }}";
+            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}";
+            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}";
           } > .env
           chmod 600 .env
-
+      
       - name: Build & Up with docker-compose
         shell: bash
         run: |
           set -e
+          # Detiene el contenedor anterior (si existe)
           docker-compose down --remove-orphans || true
+          
+          # Construye la nueva imagen y levanta el contenedor
           docker-compose up -d --build
+          
+          # Muestra los contenedores corriendo
           docker-compose ps
-          docker logs --tail 50 taxi_dashboard || true
+
+          # Muestra los últimos logs del NUEVO contenedor
+          docker logs --tail 50 metro_dashboard || true # <- ¡CAMBIADO!
+
+      # Verificación opcional
+      - name: Verify AWS identity inside container
+        shell: bash
+        run: |
+          set -e
+          # Verificamos que las credenciales funcionen DENTRO del contenedor
+          docker exec metro_dashboard aws sts get-caller-identity || (echo "AWS creds not working in container" && exit 1) # <- ¡CAMBIADO!
