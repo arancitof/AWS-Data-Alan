@@ -409,3 +409,5 @@ with tab4:
                 st.pyplot(fig, clear_figure=True)
  
 st.caption("Hecho con Streamlit • Seaborn • Matplotlib • Pandas")
+
+#Prueba 2
