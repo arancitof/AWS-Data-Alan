@@ -205,3 +205,5 @@ if not kpis_totales['historico'].empty:
          st.info("No hay datos históricos para el año seleccionado.")
 else:
     st.warning("No se pudo cargar el KPI histórico pre-calculado.")
+
+#Prueba de Deploy continuo...
