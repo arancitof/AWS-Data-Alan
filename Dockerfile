@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir \
 WORKDIR /app
 
 # Copiar tu app (asumiendo que se llama dashboard.py)
-COPY dashboard.py /app/
+COPY app.py /app/
 
 # Puerto
 EXPOSE 8502
